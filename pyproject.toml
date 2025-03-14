@@ -1,0 +1,22 @@
+[project]
+name = "heritage-fest-dinner"
+version = "0.1.0"
+description = "Generate PDF dish cards and menu for Heritage Fest dinner event"
+authors = [
+    {name = "Murat Keceli", email = "keceli@anl.gov"},
+]
+dependencies = [
+    "reportlab>=4.0.0",
+    "pandas>=2.0.0",
+    "Pillow>=10.0.0",
+]
+requires-python = ">=3.7"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*"]
+exclude = ["tests*"] 
