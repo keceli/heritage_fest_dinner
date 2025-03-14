@@ -567,6 +567,84 @@ def create_empty_dish_card():
     print("Created empty dish card template: dish_card.pdf")
 
 
+def create_signs():
+    """Create large signs for tables and directions in landscape orientation"""
+    signs = ["TABLE 1", "TABLE 2", "TABLE 3", "ENTER", "EXIT"]
+
+    for sign_text in signs:
+        # Create PDF with letter size in landscape
+        output_path = f"{sign_text.lower().replace(' ', '_')}_sign.pdf"
+        width, height = letter[1], letter[0]  # Swap width and height for landscape
+        c = canvas.Canvas(output_path, pagesize=(width, height))
+
+        # Set margins
+        margin = 72  # 1 inch in points
+        content_width = width - 2 * margin
+        content_height = height - 2 * margin
+
+        # Draw Heritage Fest logo on the left top
+        if os.path.exists(logo_path):
+            img = Image.open(logo_path)
+            aspect = img.width / img.height
+            logo_height = 120
+            logo_width = logo_height * aspect
+
+            # Position logo in the top left
+            logo_x = margin
+            logo_y = height - margin - logo_height
+            c.drawImage(logo_path, logo_x, logo_y, width=logo_width, height=logo_height)
+
+        # Draw QR code on the right top if it exists
+        qr_code_path = "menu_qr.png"
+        if os.path.exists(qr_code_path):
+            qr_img = Image.open(qr_code_path)
+            qr_aspect = qr_img.width / qr_img.height
+            qr_height = 100
+            qr_width = qr_height * qr_aspect
+
+            # Position QR code in the top right
+            qr_x = width - margin - qr_width
+            qr_y = height - margin - qr_height
+            c.drawImage(qr_code_path, qr_x, qr_y, width=qr_width, height=qr_height)
+
+            # Add caption under QR code
+            c.setFont("Helvetica", 10)
+            c.setFillColor(NAVY_BLUE)
+            caption = "scan for the dinner menu"
+            caption_width = c.stringWidth(caption, "Helvetica", 10)
+            c.drawString(qr_x + (qr_width - caption_width) / 2, qr_y - 15, caption)
+
+        # Draw the main text
+        c.setFont("Helvetica-Bold", 120)  # Large font size for visibility
+        c.setFillColor(NAVY_BLUE)
+
+        # Calculate text dimensions
+        text_width = c.stringWidth(sign_text, "Helvetica-Bold", 120)
+        text_height = 120  # Approximate height of the text
+
+        # Center the text on the page
+        x = (width - text_width) / 2
+        y = (height - text_height) / 2
+
+        # Draw orange border
+        border_margin = 40  # Space between text and border
+        c.setStrokeColor(ORANGE)
+        c.setLineWidth(3)
+        c.rect(
+            x - border_margin,
+            y - border_margin,
+            text_width + 2 * border_margin,
+            text_height + 2 * border_margin,
+        )
+
+        # Draw the text
+        c.drawString(x, y, sign_text)
+
+        # Save the page
+        c.save()
+        print(f"Created sign: {output_path}")
+
+
 # Create individual dish cards
 for idx, row in df.iterrows():
     create_dish_card(row, idx)
@@ -578,3 +656,6 @@ print("Created menu.pdf")
 
 # Create empty dish card template
 create_empty_dish_card()
+
+# Create signs
+create_signs()
