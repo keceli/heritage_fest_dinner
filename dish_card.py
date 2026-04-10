@@ -16,7 +16,7 @@ NAVY_BLUE = Color(0.0, 0.12, 0.36)  # Dark blue color
 ORANGE = Color(1.0, 0.5, 0.0)  # Orange color
 
 # Path to your CSV file
-csv_file = "hf25_responses3.csv"
+csv_file = "hf26.csv"
 logo_path = "heritage_fest.png"
 
 # Column names from the actual CSV
@@ -30,6 +30,7 @@ desc_columns = [
 ]
 provider_column = "Provided by:"
 outlet_column = "Do you need an electrical outlet?"
+special_notes_column = "If you have any special note, you can write below."
 
 # Try reading the CSV file with different encodings
 encodings = ["utf-8", "utf-8-sig", "utf-16"]
@@ -255,6 +256,25 @@ def create_dish_card(row, idx):
     # Left align the outlet text with the same margin as other content
     draw_text(c, outlet_text, left_margin, current_y, "Helvetica", 12)
     current_y -= 30  # Space after outlet info
+
+    # Add special notes if they exist
+    if pd.notna(row[special_notes_column]) and str(row[special_notes_column]).strip():
+        current_y -= 10  # Extra space before special notes
+        c.setFillColor(NAVY_BLUE)
+        notes_label = "Special Notes:"
+        draw_text(c, notes_label, left_margin, current_y, "Helvetica-Bold", 12)
+        current_y -= 18
+
+        # Wrap and draw the special notes
+        special_notes = str(row[special_notes_column]).strip()
+        notes_lines = wrap_text(special_notes, "Helvetica", 11, content_width - 40, c)
+
+        c.setFillColor(black)
+        for line in notes_lines:
+            draw_text(c, line, left_margin, current_y, "Helvetica", 11)
+            current_y -= 16
+
+        current_y -= 15  # Space after special notes
 
     # Add the Heritage Fest logo at the bottom
     if os.path.exists(logo_path):

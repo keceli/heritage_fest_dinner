@@ -10,7 +10,7 @@ dependencies = [
     "pandas>=2.0.0",
     "Pillow>=10.0.0",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 [build-system]
 requires = ["setuptools>=61.0"]
